@@ -6,8 +6,8 @@ inventory = {}
 sample1 = {"name": "Laptop", "brand": "Dell", "category": "Electronics", "quantity": 5, "price": 799.99}
 sample2 = {"name": "Chair", "brand": "IKEA", "category": "Home", "quantity": 10, "price": 49.99}
 
-inventory[1] = sample_product_1
-inventory[2] = sample_product_2
+inventory[1] = sample1
+inventory[2] = sample2
 
 product_ids = {1, 2}
 next_id = 3
@@ -41,11 +41,11 @@ def menu():
         if choice == "1":
             add_item()
         elif choice == "2":
-            view_inventory()
+            retrieve_inventory()
         elif choice == "3":
             update_item()
         elif choice == "4":
-            remove_item()
+            delete_item()
         elif choice == "5":
             print("Exit Program")
             break
@@ -105,3 +105,30 @@ class PerishableProduct(Product):
         super().display()
         print(f"Expiry Date: {self.expiration_date}")
 
+# Save File
+def save_inventory_to_file():
+    with open("inventory.txt", "w") as f:
+        for pid, item in inventory.items():
+            line = f"{pid}|{item['name']}|{item['brand']}|{item['category']}|{item['quantity']}|{item['price']}"
+            f.write(line + "\n")
+
+# Load File
+def load_inventory_from_file():
+    global next_id
+    try:
+        with open("inventory.txt", "r") as f:
+            for line in f:
+                parts = line.strip().split("|")
+                pid = int(parts[0])
+                name, brand, category = parts[1], parts[2], parts[3]
+                quantity, price = int(parts[4]), float(parts[5])
+                inventory[pid] = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
+                product_ids.add(pid)
+                next_id = max(next_id, pid + 1)
+    except FileNotFoundError:
+        pass
+
+if __name__ == "__main__":
+    load_inventory_from_file()
+    menu()
+    save_inventory_to_file()
