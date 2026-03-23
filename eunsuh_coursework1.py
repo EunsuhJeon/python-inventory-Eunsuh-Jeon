@@ -52,3 +52,28 @@ def menu():
         else:
             print("Incorrect choice. Please try again..\n")
 
+def retrieve_inventory():
+    if not inventory:
+        print("No Item.\n")
+        return
+    for pid, item in inventory.items():
+        print(f"ID: {pid} | Name: {item['name']} | Brand: {item['brand']} | Category: {item['category']}")
+        print(f"Quantity: {item['quantity']} | Price: ${item['price']:.2f}\n")
+
+def update_item():
+    pid = int(input("Enter ID to update: "))
+    if pid in inventory:
+        new_qty = int(input("Enter new quantity: "))
+        inventory[pid]['quantity'] = new_qty
+        print("Stock has been updated!\n")
+    else:
+        print("The ID does not exist.\n")
+
+def delete_item():
+    pid = int(input("Enter ID to delete: "))
+    if pid in inventory:
+        del inventory[pid]
+        product_ids.discard(pid)
+        print("Item has been deleted!\n")
+    else:
+        print("The ID does not exist.\n")
