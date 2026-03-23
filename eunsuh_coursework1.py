@@ -77,3 +77,31 @@ def delete_item():
         print("Item has been deleted!\n")
     else:
         print("The ID does not exist.\n")
+
+# Product Class
+class Product:
+    def __init__(self, product_id, name, brand, category, quantity, price):
+        self.id = product_id
+        self.name = name
+        self.brand = brand
+        self.category = category
+        self.quantity = quantity
+        self.price = price
+
+    def update_quantity(self, new_qty):
+        self.quantity = new_qty
+
+    def display(self):
+        print(f"ID: {self.id} | {self.name} | {self.brand} | {self.category}")
+        print(f"Quantity: {self.quantity} | Price: ${self.price:.2f}")
+
+# PerishableProduct child class
+class PerishableProduct(Product):
+    def __init__(self, product_id, name, brand, category, quantity, price, expiration_date):
+        super().__init__(product_id, name, brand, category, quantity, price)
+        self.expiration_date = expiration_date
+
+    def display(self):
+        super().display()
+        print(f"Expiry Date: {self.expiration_date}")
+
