@@ -38,18 +38,20 @@ def add_item():
 
     # item = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
     # inventory[next_id] = item
-    product_ids.add(next_id)
+    product_ids.add(next_id) 
     next_id += 1
 
     print(f"\nID {next_id} item has been added!\n")
 
 def menu():
     while True:
+        print("===========================================")
         print("1. Add Item")
         print("2. Retrieve Stock")
         print("3. Update Item")
         print("4. Delete Item")
         print("5. Exit")
+        print("===========================================")
         choice = input("Select Option: ").strip()
 
         if choice == "1":
@@ -61,7 +63,9 @@ def menu():
         elif choice == "4":
             delete_item()
         elif choice == "5":
-            print("Exit Program")
+            print("Saving inventory to file...")
+            save_inventory_to_file()
+            print("Exiting system. Goodbye!")
             break
         else:
             print("Incorrect choice. Please try again..\n")
@@ -187,6 +191,23 @@ def load_inventory_from_file(path="inventory.txt"):
                 next_id = max(next_id, pid + 1)
     except FileNotFoundError:
         pass
+
+def read_positive_int(prompt):
+    while True:
+        try:
+            value = int(input(prompt).strip())
+            if value >= 0:
+                return value
+            print("Please enter a non-negative integer.")
+        except ValueError:
+            print("Invalid number. Try again.")
+
+def read_price(prompt):
+    while True:
+        try:
+            return float(input(prompt).strip())
+        except ValueError:
+            print("Invalid price. Try again.")
 
 if __name__ == "__main__":
     load_inventory_from_file()
