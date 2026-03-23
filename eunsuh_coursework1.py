@@ -155,23 +155,34 @@ class PerishableProduct(Product):
         print(f"Expiry Date: {self.expiration_date}")
 
 # Save File
-def save_inventory_to_file():
-    with open("inventory.txt", "w") as f:
-        for pid, item in inventory.items():
-            line = f"{pid}|{item['name']}|{item['brand']}|{item['category']}|{item['quantity']}|{item['price']}"
-            f.write(line + "\n")
+def save_inventory_to_file(path="inventory.txt"):
+    with open(path, "w", encoding="utf-8") as f:
+        for pid, p in inventory.items():
+            if isinstance(p, PerishableProduct):
+                line = f"{pid}|{p.name}|{p.brand}|{p.category}|{p.quantity}|{p.price}|P|{p.expiration_date}\n"
+            else:
+                line = f"{pid}|{p.name}|{p.brand}|{p.category}|{p.quantity}|{p.price}|N|\n"
+            f.write(line)
 
 # Load File
-def load_inventory_from_file():
+def load_inventory_from_file(path="inventory.txt"):
     global next_id
     try:
-        with open("inventory.txt", "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 parts = line.strip().split("|")
                 pid = int(parts[0])
                 name, brand, category = parts[1], parts[2], parts[3]
-                quantity, price = int(parts[4]), float(parts[5])
-                inventory[pid] = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
+                qty, price = int(parts[4]), float(parts[5])
+                kind = parts[6] if len(parts) > 6 else "N"
+                if kind == "P" and len(parts) > 7:
+                    inventory[pid] = PerishableProduct(
+                        pid, name, brand, category, qty, price, parts[7]
+                    )
+                else:
+                    inventory[pid] = Product(
+                        pid, name, brand, category, qty, price
+                    )
                 product_ids.add(pid)
                 next_id = max(next_id, pid + 1)
     except FileNotFoundError:
