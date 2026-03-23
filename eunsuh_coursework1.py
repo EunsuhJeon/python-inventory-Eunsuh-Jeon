@@ -99,6 +99,20 @@ def delete_item():
     else:
         print("The ID does not exist.\n")
 
+def choose_category():
+    print("Choose a category:")
+    for i,c in enumerate(categories, start=1):
+        print(f" {i}. {c}")
+    while True:
+        raw = input("Select category: ").strip()
+        try:
+            idx = int(raw) - 1
+            if 0 <= idx < len(categories):
+                return categories(idx)
+        except ValueError:
+            pass
+        print("Invalid category. Please try again.\n")
+
 # Product Class
 class Product:
     def __init__(self, product_id, name, brand, category, quantity, price):
