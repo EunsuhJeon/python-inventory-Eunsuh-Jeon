@@ -29,3 +29,26 @@ def add_item():
     print(f"\nID {next_id} item has been added!\n")
     next_id += 1
 
+def menu():
+    while True:
+        print("1. Add Item")
+        print("2. Retrieve Stock")
+        print("3. Update Item")
+        print("4. Delete Item")
+        print("5. Exit")
+        choice = input("Select Option: ").strip()
+
+        if choice == "1":
+            add_item()
+        elif choice == "2":
+            view_inventory()
+        elif choice == "3":
+            update_item()
+        elif choice == "4":
+            remove_item()
+        elif choice == "5":
+            print("Exit Program")
+            break
+        else:
+            print("Incorrect choice. Please try again..\n")
+
