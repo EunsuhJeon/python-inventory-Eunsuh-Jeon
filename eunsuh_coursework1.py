@@ -12,6 +12,9 @@ inventory[2] = sample_product_2
 product_ids = {1, 2}
 next_id = 3
 
+categories = ["Electronics", "Home", "Office", "Food"]
+brands = ("Dell", "IKEA", "Samsung")
+
 def add_item():
     global next_id
     name = input("Enter the product name: ").strip()
