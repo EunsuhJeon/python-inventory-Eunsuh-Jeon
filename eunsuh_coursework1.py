@@ -4,44 +4,34 @@ inventory = {}
 product_ids = set()
 next_id = 3
 
-# sample data
-sample1 = {"name": "Laptop", "brand": "Dell", "category": "Electronics", "quantity": 5, "price": 799.99}
-sample2 = {"name": "Chair", "brand": "IKEA", "category": "Home", "quantity": 10, "price": 49.99}
-
-inventory[1] = sample1
-inventory[2] = sample2
-
-# product_ids = {1, 2}
-# next_id = 3
-
 categories = ["Electronics", "Home", "Office", "Food"]
 brands = ("Dell", "IKEA", "Samsung", "Other")
 
 def add_item():
     global next_id
     name = input("Enter the product name: ").strip()
-    category = input("Enter the category(Electronics, Home, Office): ").strip()
-    brand = input("Enter the brand name: ").strip()
-    quantity = int(input("Enter the quantity: ").strip())
-    price = float(input("Enter the price: ").strip())
+    category = choose_category()
+    brand = choose_brand()
+    quantity = read_positive_int("Enter the quantity: ")
+    price = read_price("Enter the price: ")
 
     perishable = input("Perishable Product? (y/n): ").strip().lower() == "y"
     if perishable:
         exp = input("Enter the expiration date (YYYY-MM-DD): ").strip()
-        inventory[next_id] = PerishableProduct(
+        product = PerishableProduct(
             next_id, name, brand, category, quantity, price, exp
         )
     else:
-        inventory[next_id] = Product(
+        product = Product(
             next_id, name, brand, category, quantity, price
         )
 
-    # item = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
-    # inventory[next_id] = item
-    product_ids.add(next_id) 
+    inventory[next_id] = product
+    product_ids.add(next_id)
+    added_id = next_id
     next_id += 1
 
-    print(f"\nID {next_id} item has been added!\n")
+    print(f"\nID {added_id} item has been added!\n")
 
 def menu():
     while True:
@@ -88,14 +78,14 @@ def update_item():
     name = input("Enter product name to update: ").strip()
     for pid, product in inventory.items():
         if product.name.lower() == name.lower():
-            new_quantity = int(input("Enter new quantity: ").strip())
+            new_quantity = read_positive_int("Enter new quantity: ")
             product.update_quantity(new_quantity)
             print("Stock has been updated!\n")
             return
     print("Product not found.\n")
 
 def delete_item():
-    pid = int(input("Enter ID to delete: "))
+    pid = read_positive_int("Enter ID to delete: ")
     if pid in inventory:
         del inventory[pid]
         product_ids.discard(pid)
@@ -112,7 +102,7 @@ def choose_category():
         try:
             idx = int(raw) - 1
             if 0 <= idx < len(categories):
-                return categories(idx)
+                return categories[idx]
         except ValueError:
             pass
         print("Invalid category. Please try again.\n")
@@ -173,6 +163,8 @@ def load_inventory_from_file(path="inventory.txt"):
     global next_id
     try:
         with open(path, "r", encoding="utf-8") as f:
+            inventory.clear()
+            product_ids.clear()
             for line in f:
                 parts = line.strip().split("|")
                 pid = int(parts[0])
@@ -212,4 +204,3 @@ def read_price(prompt):
 if __name__ == "__main__":
     load_inventory_from_file()
     menu()
-    save_inventory_to_file()
