@@ -1,6 +1,8 @@
 import os
 
 inventory = {}
+product_ids = set()
+next_id = 3
 
 # sample data
 sample1 = {"name": "Laptop", "brand": "Dell", "category": "Electronics", "quantity": 5, "price": 799.99}
@@ -9,8 +11,8 @@ sample2 = {"name": "Chair", "brand": "IKEA", "category": "Home", "quantity": 10,
 inventory[1] = sample1
 inventory[2] = sample2
 
-product_ids = {1, 2}
-next_id = 3
+# product_ids = {1, 2}
+# next_id = 3
 
 categories = ["Electronics", "Home", "Office", "Food"]
 brands = ("Dell", "IKEA", "Samsung")
@@ -23,11 +25,23 @@ def add_item():
     quantity = int(input("Enter the quantity: ").strip())
     price = float(input("Enter the price: ").strip())
 
-    item = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
-    inventory[next_id] = item
+    perishable = input("Perishable Product? (y/n): ").strip().lower() == "y"
+    if perishable:
+        exp = input("Enter the expiration date (YYYY-MM-DD): ").strip()
+        inventory[next_id] = PerishableProduct(
+            next_id, name, brand, category, quantity, price, exp
+        )
+    else:
+        inventory[next_id] = Product(
+            next_id, name, brand, category, quantity, price
+        )
+
+    # item = {"name": name, "brand": brand, "category": category, "quantity": quantity, "price": price}
+    # inventory[next_id] = item
     product_ids.add(next_id)
-    print(f"\nID {next_id} item has been added!\n")
     next_id += 1
+
+    print(f"\nID {next_id} item has been added!\n")
 
 def menu():
     while True:
@@ -54,20 +68,27 @@ def menu():
 
 def retrieve_inventory():
     if not inventory:
-        print("No Item.\n")
+        print("No Items.\n")
         return
-    for pid, item in inventory.items():
-        print(f"ID: {pid} | Name: {item['name']} | Brand: {item['brand']} | Category: {item['category']}")
-        print(f"Quantity: {item['quantity']} | Price: ${item['price']:.2f}\n")
+    print("Current Inventory:\n--------------------------------")
+
+    # for pid, item in inventory.items():
+    #     print(f"ID: {pid} | Name: {item['name']} | Brand: {item['brand']} | Category: {item['category']}")
+        # print(f"Quantity: {item['quantity']} | Price: ${item['price']:.2f}\n")
+    for pid in sorted(inventory):
+        inventory[pid].display()
+        print()
 
 def update_item():
-    pid = int(input("Enter ID to update: "))
-    if pid in inventory:
-        new_qty = int(input("Enter new quantity: "))
-        inventory[pid]['quantity'] = new_qty
-        print("Stock has been updated!\n")
-    else:
-        print("The ID does not exist.\n")
+    # pid = int(input("Enter ID to update: "))
+    name = input("Enter product name to update: ").strip()
+    for pid, product in inventory.items():
+        if product.name.lower() == name.lower():
+            new_quantity = int(input("Enter new quantity: ").strip())
+            product.update_quantity(new_quantity)
+            print("Stock has been updated!\n")
+            return
+    print("Product not found.\n")
 
 def delete_item():
     pid = int(input("Enter ID to delete: "))
