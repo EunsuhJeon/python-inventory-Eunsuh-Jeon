@@ -15,7 +15,7 @@ inventory[2] = sample2
 # next_id = 3
 
 categories = ["Electronics", "Home", "Office", "Food"]
-brands = ("Dell", "IKEA", "Samsung")
+brands = ("Dell", "IKEA", "Samsung", "Other")
 
 def add_item():
     global next_id
@@ -112,6 +112,20 @@ def choose_category():
         except ValueError:
             pass
         print("Invalid category. Please try again.\n")
+
+def choose_brand():
+    print("Choose a brand: ")
+    for i,b in enumerate(brands, start=1):
+        print(f" {i}. {b}")
+    while True:
+        raw = input("Select brand: ").strip()
+        try:
+            idx = int(raw) - 1
+            if 0 <= idx < len(brands):
+                return brands[idx]
+        except ValueError:
+            pass
+        print("Invalid brand. Please try again.\n")
 
 # Product Class
 class Product:
